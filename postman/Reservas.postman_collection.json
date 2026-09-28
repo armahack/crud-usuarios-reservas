@@ -1,0 +1,182 @@
+/target/
+.idea/
+*.iml
+.env{
+  "info": {
+    "name": "CRUD Usuarios y Reservas",
+    "description": "Colección para probar los endpoints de la API de reservas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "Crear usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('usuarioId', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana Pérez\",\n  \"correo\": \"ana@example.com\",\n  \"edad\": 30\n}"
+            },
+            "url": "{{baseUrl}}/api/usuarios"
+          }
+        },
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/usuarios"
+          }
+        },
+        {
+          "name": "Buscar usuario",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/usuarios/{{usuarioId}}"
+          }
+        },
+        {
+          "name": "Modificar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana Pérez Actualizada\",\n  \"correo\": \"ana@example.com\",\n  \"edad\": 31\n}"
+            },
+            "url": "{{baseUrl}}/api/usuarios/{{usuarioId}}"
+          }
+        },
+        {
+          "name": "Listar reservas del usuario",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/usuarios/{{usuarioId}}/reservas"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reservas",
+      "item": [
+        {
+          "name": "Crear reserva",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('reservaId', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHora\": \"2026-10-12T19:30:00\",\n  \"cantidadPersonas\": 4,\n  \"observaciones\": \"Mesa junto a la ventana\",\n  \"usuarioId\": {{usuarioId}}\n}"
+            },
+            "url": "{{baseUrl}}/api/reservas"
+          }
+        },
+        {
+          "name": "Listar reservas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/reservas"
+          }
+        },
+        {
+          "name": "Filtrar reservas por usuario",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/reservas?usuarioId={{usuarioId}}"
+          }
+        },
+        {
+          "name": "Buscar reserva",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/reservas/{{reservaId}}"
+          }
+        },
+        {
+          "name": "Modificar reserva",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHora\": \"2026-10-13T20:00:00\",\n  \"cantidadPersonas\": 2,\n  \"observaciones\": \"Reserva actualizada\",\n  \"usuarioId\": {{usuarioId}}\n}"
+            },
+            "url": "{{baseUrl}}/api/reservas/{{reservaId}}"
+          }
+        },
+        {
+          "name": "Eliminar reserva",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/reservas/{{reservaId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Eliminar usuario",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/usuarios/{{usuarioId}}"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "usuarioId",
+      "value": ""
+    },
+    {
+      "key": "reservaId",
+      "value": ""
+    }
+  ]
+}
