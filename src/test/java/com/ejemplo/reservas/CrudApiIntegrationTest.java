@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,6 +38,19 @@ class CrudApiIntegrationTest {
     private UsuarioRepository usuarioRepository;
 
     private Long usuarioId;
+
+    @Test
+    void sirveElPanelWebDesdeLaRaiz() throws Exception {
+        mockMvc.perform(get("/"))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(get("/index.html"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("Panel web para probar la API")))
+            .andExpect(content().string(org.hamcrest.Matchers.not(
+                org.hamcrest.Matchers.containsString("DBeaver"))));
+    }
 
     @BeforeEach
     void crearUsuarioBase() throws Exception {

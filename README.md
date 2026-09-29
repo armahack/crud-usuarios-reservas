@@ -70,14 +70,9 @@ Crear o modificar reserva:
 
 Las reservas reciben y devuelven `usuarioId`, sin exponer la entidad asociada ni crear ciclos en el JSON. Los errores de validación responden con HTTP 400, los recursos inexistentes con HTTP 404 y los conflictos de correo con HTTP 409.
 
-## Verificación de datos y capturas
+## Inicio en Windows
 
-Importar `postman/Reservas.postman_collection.json` en Postman. La colección guarda automáticamente los ID al crear recursos; ejecutar primero **Crear usuario** y luego **Crear reserva**. Para comprobar la persistencia, detener y volver a iniciar la aplicación y consultar los mismos recursos. En MySQL, las tablas `usuarios` y `reservas` se pueden revisar con:
+- `iniciar.bat`: punto de entrada sencillo para abrir con doble clic. Ejecuta `iniciar.ps1` y, si ocurre un error, mantiene la ventana abierta para poder leerlo.
+- `iniciar.ps1`: comprueba que Java y Maven estén disponibles, solicita la contraseña de MySQL y ejecuta Spring Boot. Espera a que la API responda, muestra las direcciones local y de red, y abre `http://localhost:8080` en el navegador. La consola queda abierta mientras se ejecuta la aplicación; pulsa `Ctrl+C` para detenerla.
 
-```sql
-USE reservas_db;
-SELECT * FROM usuarios;
-SELECT * FROM reservas;
-```
-
-Las capturas de Postman y de las tablas se deben tomar en el entorno donde se ejecute la aplicación y MySQL.
+Antes de usarlos, inicia MySQL. También puedes ejecutar `iniciar.ps1` directamente desde PowerShell, en la carpeta del proyecto.

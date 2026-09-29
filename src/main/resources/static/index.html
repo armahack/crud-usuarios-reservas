@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reservas | Panel de prueba</title>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: #182a35;
+            background: #f2f6f6;
+            font-synthesis: none;
+            --page-background: #f2f6f6;
+            --surface: #fff;
+            --text: #182a35;
+            --muted-text: #52656b;
+            --border: #dce6e5;
+            --field-background: #fff;
+            --field-border: #c6d4d3;
+            --table-border: #e5eceb;
+            --secondary-background: #e6efee;
+            --secondary-hover: #d5e4e2;
+            --secondary-text: #254148;
+            --danger-background: #fff0ee;
+            --danger-hover: #ffdfdb;
+            --danger-text: #922b20;
+            --empty-text: #718187;
+            --card-shadow: 0 4px 16px #183b4310;
+        }
+        :root[data-theme="dark"] {
+            color-scheme: dark;
+            color: #e5eeee;
+            background: #111c20;
+            --page-background: #111c20;
+            --surface: #1b2b30;
+            --text: #e5eeee;
+            --muted-text: #b2c2c3;
+            --border: #354a4e;
+            --field-background: #142226;
+            --field-border: #496166;
+            --table-border: #354a4e;
+            --secondary-background: #30464b;
+            --secondary-hover: #3c565b;
+            --secondary-text: #e5eeee;
+            --danger-background: #512e30;
+            --danger-hover: #66393c;
+            --danger-text: #ffd4d0;
+            --empty-text: #a3b5b6;
+            --card-shadow: 0 4px 18px #00000030;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--page-background); color: var(--text); }
+        header {
+            padding: 28px max(24px, calc((100% - 1120px) / 2));
+            color: #fff;
+            background: #123b43;
+        }
+        header p { margin: 6px 0 0; color: #c9dddd; }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        .theme-toggle {
+            flex: 0 0 auto;
+            border: 1px solid #ffffff70;
+            background: #ffffff18;
+            color: #fff;
+        }
+        .theme-toggle:hover { background: #ffffff30; }
+        h1, h2 { margin-top: 0; }
+        h1 { margin-bottom: 0; font-size: 1.65rem; }
+        main { width: min(1120px, calc(100% - 32px)); margin: 28px auto 48px; }
+        .notice {
+            display: none;
+            margin-bottom: 18px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: var(--danger-background);
+            color: var(--danger-text);
+        }
+        .notice.visible { display: block; }
+        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+        section {
+            min-width: 0;
+            padding: 22px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--surface);
+            box-shadow: var(--card-shadow);
+        }
+        section h2 { margin-bottom: 16px; font-size: 1.15rem; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        label { display: grid; gap: 6px; color: var(--muted-text); font-size: .88rem; }
+        label.wide { grid-column: 1 / -1; }
+        input, select {
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 10px;
+            border: 1px solid var(--field-border);
+            border-radius: 6px;
+            background: var(--field-background);
+            color: var(--text);
+            font: inherit;
+        }
+        input:focus, select:focus { outline: 2px solid #58a99c; outline-offset: 1px; }
+        .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+        button {
+            min-height: 36px;
+            padding: 7px 12px;
+            border: 0;
+            border-radius: 6px;
+            background: #14786e;
+            color: #fff;
+            font: inherit;
+            cursor: pointer;
+        }
+        button:hover { background: #105f58; }
+        button.secondary { background: var(--secondary-background); color: var(--secondary-text); }
+        button.secondary:hover { background: var(--secondary-hover); }
+        button.danger { background: var(--danger-background); color: var(--danger-text); }
+        button.danger:hover { background: var(--danger-hover); }
+        .list-section { margin-top: 20px; }
+        .list-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .list-heading h2 { margin-bottom: 0; }
+        .table-wrap { overflow-x: auto; margin-top: 14px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 10px 9px; border-bottom: 1px solid var(--table-border); vertical-align: middle; }
+        th { color: var(--muted-text); font-size: .82rem; font-weight: 600; }
+        td { font-size: .9rem; }
+        td.actions-cell { white-space: nowrap; }
+        td.actions-cell button { margin: 2px; }
+        .empty { padding: 20px 8px; color: var(--empty-text); text-align: center; }
+        .filter { display: flex; align-items: center; gap: 8px; color: var(--muted-text); font-size: .9rem; }
+        .filter select { width: auto; min-width: 170px; }
+        @media (max-width: 760px) {
+            header { padding: 24px 18px; }
+            .grid { grid-template-columns: 1fr; }
+            section { padding: 18px; }
+            .list-heading { align-items: flex-start; flex-direction: column; }
+        }
+        @media (max-width: 430px) {
+            .header-content { align-items: flex-start; flex-direction: column; }
+        }
+        @media (max-width: 430px) {
+            .form-grid { grid-template-columns: 1fr; }
+            label.wide { grid-column: auto; }
+            .filter { align-items: flex-start; flex-direction: column; }
+            .filter select { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-content">
+        <div>
+            <h1>Reservas</h1>
+            <p>Panel web para probar la API de usuarios y reservas.</p>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">Modo oscuro</button>
+    </div>
+</header>
+<main>
+    <div id="notice" class="notice" role="alert" aria-live="polite"></div>
+
+    <div class="grid">
+        <section aria-labelledby="users-title">
+            <h2 id="users-title">Usuarios</h2>
+            <form id="user-form">
+                <input name="id" type="hidden">
+                <div class="form-grid">
+                    <label class="wide">Nombre
+                        <input name="nombre" maxlength="100" required>
+                    </label>
+                    <label>Correo
+                        <input name="correo" type="email" maxlength="120" required>
+                    </label>
+                    <label>Edad
+                        <input name="edad" type="number" min="0" required>
+                    </label>
+                </div>
+                <div class="actions">
+                    <button type="submit">Guardar usuario</button>
+                    <button class="secondary" type="reset">Limpiar</button>
+                </div>
+            </form>
+        </section>
+
+        <section aria-labelledby="reservation-title">
+            <h2 id="reservation-title">Reservas</h2>
+            <form id="reservation-form">
+                <input name="id" type="hidden">
+                <div class="form-grid">
+                    <label>Fecha y hora
+                        <input name="fechaHora" type="datetime-local" required>
+                    </label>
+                    <label>Personas
+                        <input name="cantidadPersonas" type="number" min="1" required>
+                    </label>
+                    <label class="wide">Usuario
+                        <select name="usuarioId" required>
+                            <option value="">Selecciona un usuario</option>
+                        </select>
+                    </label>
+                    <label class="wide">Observaciones
+                        <input name="observaciones" maxlength="255">
+                    </label>
+                </div>
+                <div class="actions">
+                    <button type="submit">Guardar reserva</button>
+                    <button class="secondary" type="reset">Limpiar</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <section class="list-section" aria-labelledby="users-list-title">
+        <div class="list-heading">
+            <h2 id="users-list-title">Usuarios registrados</h2>
+            <button id="refresh" class="secondary" type="button">Actualizar listas</button>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Edad</th><th>Acciones</th></tr></thead>
+                <tbody id="users-list"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="list-section" aria-labelledby="reservations-list-title">
+        <div class="list-heading">
+            <h2 id="reservations-list-title">Reservas registradas</h2>
+            <label class="filter">Filtrar por usuario
+                <select id="reservation-filter"><option value="">Todos los usuarios</option></select>
+            </label>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>ID</th><th>Fecha y hora</th><th>Personas</th><th>Usuario</th><th>Observaciones</th><th>Acciones</th></tr></thead>
+                <tbody id="reservations-list"></tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<script>
+    const userForm = document.querySelector("#user-form");
+    const reservationForm = document.querySelector("#reservation-form");
+    const notice = document.querySelector("#notice");
+    const reservationFilter = document.querySelector("#reservation-filter");
+    const themeToggle = document.querySelector("#theme-toggle");
+    let users = [];
+    let reservations = [];
+
+    function setTheme(theme) {
+        const isDark = theme === "dark";
+        document.documentElement.dataset.theme = isDark ? "dark" : "light";
+        themeToggle.textContent = isDark ? "Modo claro" : "Modo oscuro";
+        themeToggle.setAttribute("aria-pressed", String(isDark));
+        localStorage.setItem("reservas-theme", isDark ? "dark" : "light");
+    }
+
+    const savedTheme = localStorage.getItem("reservas-theme");
+    setTheme(savedTheme === "dark" ? "dark" : "light");
+    themeToggle.addEventListener("click", () => {
+        setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+    });
+
+    async function api(path, options = {}) {
+        const method = (options.method || "GET").toUpperCase();
+        const headers = { ...options.headers };
+        const response = await fetch(path, {
+            ...options,
+            method,
+            headers: options.body ? { "Content-Type": "application/json", ...headers } : headers
+        });
+        if (response.status === 204) return null;
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || `Error HTTP ${response.status}`);
+        return result;
+    }
+
+    function showError(error) {
+        notice.textContent = error.message || "No se pudo completar la solicitud.";
+        notice.classList.add("visible");
+    }
+
+    function clearError() {
+        notice.textContent = "";
+        notice.classList.remove("visible");
+    }
+
+    function addCell(row, value) {
+        const cell = document.createElement("td");
+        cell.textContent = value ?? "";
+        row.append(cell);
+        return cell;
+    }
+
+    function addAction(row, label, className, handler) {
+        const cell = row.querySelector(".actions-cell") || document.createElement("td");
+        cell.className = "actions-cell";
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = className;
+        button.textContent = label;
+        button.addEventListener("click", handler);
+        cell.append(button);
+        if (!cell.parentElement) row.append(cell);
+    }
+
+    function showEmpty(table, columns, message) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.className = "empty";
+        cell.colSpan = columns;
+        cell.textContent = message;
+        row.append(cell);
+        table.replaceChildren(row);
+    }
+
+    function renderUsers() {
+        const table = document.querySelector("#users-list");
+        table.replaceChildren();
+        if (users.length === 0) {
+            showEmpty(table, 5, "Todavia no hay usuarios.");
+            return;
+        }
+        for (const user of users) {
+            const row = document.createElement("tr");
+            addCell(row, user.id);
+            addCell(row, user.nombre);
+            addCell(row, user.correo);
+            addCell(row, user.edad);
+            addAction(row, "Editar", "secondary", () => {
+                userForm.elements.id.value = user.id;
+                userForm.elements.nombre.value = user.nombre;
+                userForm.elements.correo.value = user.correo;
+                userForm.elements.edad.value = user.edad;
+                userForm.scrollIntoView({ behavior: "smooth", block: "center" });
+            });
+            addAction(row, "Eliminar", "danger", async () => {
+                if (!confirm(`¿Eliminar a ${user.nombre} y sus reservas?`)) return;
+                try {
+                    await api(`/api/usuarios/${user.id}`, { method: "DELETE" });
+                    await loadData();
+                    clearError();
+                } catch (error) {
+                    showError(error);
+                }
+            });
+            table.append(row);
+        }
+    }
+
+    function renderUserOptions() {
+        const selected = reservationFilter.value;
+        const reservationUser = reservationForm.elements.usuarioId;
+        reservationUser.replaceChildren(new Option("Selecciona un usuario", ""));
+        reservationFilter.replaceChildren(new Option("Todos los usuarios", ""));
+        for (const user of users) {
+            reservationUser.add(new Option(`${user.nombre} (#${user.id})`, user.id));
+            reservationFilter.add(new Option(`${user.nombre} (#${user.id})`, user.id));
+        }
+        reservationFilter.value = users.some(user => String(user.id) === selected) ? selected : "";
+    }
+
+    function renderReservations() {
+        const table = document.querySelector("#reservations-list");
+        table.replaceChildren();
+        if (reservations.length === 0) {
+            showEmpty(table, 6, "No hay reservas para mostrar.");
+            return;
+        }
+        for (const reservation of reservations) {
+            const row = document.createElement("tr");
+            addCell(row, reservation.id);
+            addCell(row, reservation.fechaHora.replace("T", " "));
+            addCell(row, reservation.cantidadPersonas);
+            const user = users.find(item => item.id === reservation.usuarioId);
+            addCell(row, user ? `${user.nombre} (#${user.id})` : reservation.usuarioId);
+            addCell(row, reservation.observaciones);
+            addAction(row, "Editar", "secondary", () => {
+                reservationForm.elements.id.value = reservation.id;
+                reservationForm.elements.fechaHora.value = reservation.fechaHora.slice(0, 16);
+                reservationForm.elements.cantidadPersonas.value = reservation.cantidadPersonas;
+                reservationForm.elements.usuarioId.value = reservation.usuarioId;
+                reservationForm.elements.observaciones.value = reservation.observaciones || "";
+                reservationForm.scrollIntoView({ behavior: "smooth", block: "center" });
+            });
+            addAction(row, "Eliminar", "danger", async () => {
+                if (!confirm(`¿Eliminar la reserva #${reservation.id}?`)) return;
+                try {
+                    await api(`/api/reservas/${reservation.id}`, { method: "DELETE" });
+                    await loadData();
+                    clearError();
+                } catch (error) {
+                    showError(error);
+                }
+            });
+            table.append(row);
+        }
+    }
+
+    async function loadData() {
+        const selectedUser = reservationFilter.value;
+        const reservationPath = selectedUser
+            ? `/api/reservas?usuarioId=${encodeURIComponent(selectedUser)}`
+            : "/api/reservas";
+        [users, reservations] = await Promise.all([
+            api("/api/usuarios"),
+            api(reservationPath)
+        ]);
+        renderUserOptions();
+        renderUsers();
+        renderReservations();
+    }
+
+    userForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        const data = new FormData(userForm);
+        const id = data.get("id");
+        const body = JSON.stringify({
+            nombre: data.get("nombre"),
+            correo: data.get("correo"),
+            edad: Number(data.get("edad"))
+        });
+        try {
+            await api(id ? `/api/usuarios/${id}` : "/api/usuarios", {
+                method: id ? "PUT" : "POST",
+                body
+            });
+            userForm.reset();
+            await loadData();
+            clearError();
+        } catch (error) {
+            showError(error);
+        }
+    });
+
+    reservationForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        const data = new FormData(reservationForm);
+        const id = data.get("id");
+        const body = JSON.stringify({
+            fechaHora: data.get("fechaHora"),
+            cantidadPersonas: Number(data.get("cantidadPersonas")),
+            observaciones: data.get("observaciones") || null,
+            usuarioId: Number(data.get("usuarioId"))
+        });
+        try {
+            await api(id ? `/api/reservas/${id}` : "/api/reservas", {
+                method: id ? "PUT" : "POST",
+                body
+            });
+            reservationForm.reset();
+            await loadData();
+            clearError();
+        } catch (error) {
+            showError(error);
+        }
+    });
+
+    userForm.addEventListener("reset", () => {
+        requestAnimationFrame(() => { userForm.elements.id.value = ""; });
+    });
+    reservationForm.addEventListener("reset", () => {
+        requestAnimationFrame(() => { reservationForm.elements.id.value = ""; });
+    });
+    document.querySelector("#refresh").addEventListener("click", async () => {
+        try {
+            await loadData();
+            clearError();
+        } catch (error) {
+            showError(error);
+        }
+    });
+    reservationFilter.addEventListener("change", async () => {
+        try {
+            const selectedUser = reservationFilter.value;
+            reservations = await api(selectedUser
+                ? `/api/reservas?usuarioId=${encodeURIComponent(selectedUser)}`
+                : "/api/reservas");
+            renderReservations();
+            clearError();
+        } catch (error) {
+            showError(error);
+        }
+    });
+
+    loadData().catch(showError);
+</script>
+</body>
+</html>
